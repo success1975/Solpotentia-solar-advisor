@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free solar system sizing tool for Nigeria and Africa. Calculate solar panels, battery, inverter, and charge controller size instantly. By Solpotentia Energy Ltd, Anambra State.">
+<meta name="keywords" content="solar calculator Nigeria, solar system sizing, off-grid solar Africa, solar installer Anambra, Solpotentia">
+<meta property="og:title" content="Solar System Advisor | Solpotentia Energy Ltd">
+<meta property="og:description" content="Instantly calculate your solar panel, battery, inverter and charge controller size. Built for Nigeria & Africa.">
+<meta property="og:type" content="website">
+<title>Solar System Advisor | Solpotentia Energy Ltd — Nigeria</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #F5A623;
+    --sun-deep: #E8871A;
+    --earth: #1A2B1A;
+    --earth-mid: #243324;
+    --earth-light: #2E4A2E;
+    --white: #F2EFE8;
+    --muted: #8A9A8A;
+    --accent: #7DFF6B;
+    --danger: #FF6B6B;
+    --card-bg: #1E2E1E;
+    --border: rgba(125,255,107,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--earth);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 130px;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+  header { padding: 40px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(38px, 7vw, 64px); letter-spacing: 2px; color: var(--sun); line-height: 1; }
+  .logo span { color: var(--accent); }
+  .tagline { font-size: 13px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 6px; font-family: 'Space Mono', monospace; }
+  .step-label { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 4vw, 36px); letter-spacing: 1px; color: var(--white); margin-bottom: 6px; }
+  .section-desc { font-size: 14px; color: var(--muted); margin-bottom: 28px; max-width: 540px; line-height: 1.6; }
+  .appliance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .appliance-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: border-color 0.2s, transform 0.2s; cursor: pointer; position: relative; }
+  .appliance-card:hover { border-color: rgba(125,255,107,0.4); transform: translateY(-2px); }
+  .appliance-card.active { border-color: var(--accent); background: rgba(125,255,107,0.06); }
+  .appliance-card .icon { font-size: 26px; margin-bottom: 8px; display: block; }
+  .appliance-card .name { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 12px; }
+  .appliance-card .default-watts { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+  .input-group label { display: block; font-size: 10px; color: var(--muted); margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; }
+  .input-group input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(125,255,107,0.2); border-radius: 6px; color: var(--white); font-family: 'Space Mono', monospace; font-size: 13px; padding: 7px 10px; outline: none; transition: border-color 0.2s; }
+  .input-group input:focus { border-color: var(--accent); }
+  .add-custom { background: transparent; border: 1px dashed rgba(125,255,107,0.3); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; gap: 8px; transition: border-color 0.2s, background 0.2s; min-height: 160px; }
+  .add-custom:hover { border-color: var(--accent); background: rgba(125,255,107,0.04); }
+  .add-custom span { font-size: 28px; }
+  .add-custom p { font-size: 12px; color: var(--muted); text-align: center; }
+  .settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .setting-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .setting-card label { display: block; font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; font-family: 'Space Mono', monospace; }
+  .setting-card select, .setting-card input[type="number"] { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(125,255,107,0.2); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 10px 12px; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+  .setting-card select:focus, .setting-card input[type="number"]:focus { border-color: var(--accent); }
+  .setting-card select option { background: var(--earth-mid); }
+  .calc-btn { display: block; width: 100%; background: var(--sun); color: var(--earth); font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; padding: 18px; border: none; border-radius: 12px; cursor: pointer; transition: background 0.2s, transform 0.15s; margin-bottom: 40px; }
+  .calc-btn:hover { background: var(--sun-deep); transform: translateY(-2px); }
+  .calc-btn:active { transform: translateY(0); }
+  #results { display: none; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .results-header { background: linear-gradient(135deg, var(--earth-light), var(--earth-mid)); border: 1px solid var(--accent); border-radius: 16px; padding: 24px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .total-load { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--sun); line-height: 1; }
+  .total-load small { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--muted); display: block; }
+  .result-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .result-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px 16px; position: relative; overflow: hidden; }
+  .result-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+  .result-card .r-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; font-family: 'Space Mono', monospace; margin-bottom: 10px; }
+  .result-card .r-value { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 4vw, 34px); color: var(--accent); line-height: 1; margin-bottom: 4px; }
+  .result-card .r-unit { font-size: 13px; color: var(--white); font-weight: 500; }
+  .result-card .r-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .bom { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .bom-header { background: var(--earth-light); padding: 16px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--sun); border-bottom: 1px solid var(--border); }
+  .bom table { width: 100%; border-collapse: collapse; }
+  .bom th { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; padding: 12px 20px; text-align: left; border-bottom: 1px solid var(--border); }
+  .bom td { padding: 13px 20px; font-size: 14px; border-bottom: 1px solid rgba(125,255,107,0.06); }
+  .bom tr:last-child td { border-bottom: none; }
+  .bom .item-name { font-weight: 600; color: var(--white); }
+  .bom .item-spec { color: var(--accent); font-family: 'Space Mono', monospace; font-size: 13px; }
+  .bom .item-qty { color: var(--muted); font-family: 'Space Mono', monospace; }
+  .disclaimer { background: rgba(245,166,35,0.06); border: 1px solid rgba(245,166,35,0.2); border-radius: 10px; padding: 16px 20px; font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 40px; }
+  .disclaimer strong { color: var(--sun); }
+  .reset-btn { background: transparent; border: 1px solid rgba(125,255,107,0.3); color: var(--accent); font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 2px; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; margin-bottom: 60px; }
+  .reset-btn:hover { background: rgba(125,255,107,0.1); border-color: var(--accent); }
+  footer { border-top: 1px solid var(--border); padding: 24px 0; font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  footer span { color: var(--sun); }
+  .error-msg { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); border-radius: 8px; padding: 14px 18px; font-size: 13px; color: var(--danger); margin-bottom: 20px; display: none; }
+  .custom-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; align-items: end; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+  .custom-row input, .custom-row select { background: rgba(0,0,0,0.3); border: 1px solid rgba(125,255,107,0.2); border-radius: 6px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 10px; outline: none; width: 100%; }
+  .custom-row label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .remove-btn { background: rgba(255,107,107,0.15); border: 1px solid rgba(255,107,107,0.3); color: var(--danger); border-radius: 6px; width: 36px; height: 36px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+  .remove-btn:hover { background: rgba(255,107,107,0.25); }
+  #customList { margin-bottom: 12px; }
+  @media (max-width: 600px) {
+    .custom-row { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
+    .custom-row > div:first-child { grid-column: 1 / -1; }
+    .results-header { flex-direction: column; }
+    .result-cards { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ===== CTA BANNER ===== */
+  .sol-cta-banner {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #0A2540 0%, #1A3A5C 60%, #0A2540 100%);
+    border-top: 3px solid #F5A623;
+    padding: 12px 16px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
+    font-family: 'DM Sans', sans-serif;
+    animation: slideUp 0.6s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .sol-cta-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .sol-cta-text { flex: 1; min-width: 180px; }
+  .sol-cta-headline {
+    color: #F5A623;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+  .sol-cta-sub {
+    color: rgba(255,255,255,0.72);
+    font-size: 0.74rem;
+    line-height: 1.4;
+  }
+  .sol-cta-features {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 3px;
+  }
+  .sol-cta-features span {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.6);
+  }
+  .sol-cta-features span::before { content: '✓ '; color: #7DFF6B; font-weight: 700; }
+  .sol-cta-price {
+    background: rgba(245,166,35,0.15);
+    border: 1px solid rgba(245,166,35,0.4);
+    border-radius: 8px;
+    padding: 6px 12px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .sol-cta-price .price-amount {
+    color: #F5A623;
+    font-weight: 800;
+    font-size: 1.05rem;
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+  }
+  .sol-cta-price .price-label {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .sol-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: linear-gradient(135deg, #F5A623 0%, #e0940f 100%);
+    color: #0A2540;
+    font-weight: 700;
+    font-size: 0.83rem;
+    padding: 11px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 4px 14px rgba(245,166,35,0.4);
+    white-space: nowrap;
+  }
+  .sol-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245,166,35,0.55); }
+  .sol-cta-close {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: rgba(255,255,255,0.45);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    align-self: flex-start;
+  }
+  .sol-cta-close:hover { background: rgba(255,255,255,0.18); color: white; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">Powered by</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4vw,32px);color:var(--sun);letter-spacing:2px;line-height:1;">SOLPOTENTIA ENERGY LTD</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);margin-top:4px;line-height:1.7;">
+          📍 Alor, Anambra State, Nigeria &nbsp;|&nbsp;
+          📞 <a href="tel:+2348137627210" style="color:var(--accent);text-decoration:none;">+234 813 762 7210</a> &nbsp;|&nbsp;
+          ✉️ <a href="mailto:solpotentia@gmail.com" style="color:var(--accent);text-decoration:none;">solpotentia@gmail.com</a>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Free Tool</div>
+        <div style="background:var(--sun);color:var(--earth);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;padding:6px 14px;border-radius:6px;display:inline-block;">SOLAR SYSTEM ADVISOR</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'Space Mono',monospace;">v1.0 · Nigeria & Africa</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <div class="logo">Solar<span>Advisor</span></div>
+      <div class="tagline">⚡ Built for Nigeria & Africa · Instant System Sizing</div>
+    </div>
+  </header>
+
+  <div class="step-label">Step 01</div>
+  <h2>Select Your Appliances</h2>
+  <p class="section-desc">Click each appliance you want to power. Adjust wattage and daily hours to match your actual usage.</p>
+  <div class="appliance-grid" id="applianceGrid"></div>
+
+  <div class="step-label">Custom Appliances</div>
+  <div id="customList"></div>
+  <button class="add-custom" onclick="addCustomRow()" style="width:100%;max-width:240px;min-height:52px;flex-direction:row;gap:10px;padding:14px 20px;border-radius:10px;">
+    <span>＋</span>
+    <p>Add Custom Appliance</p>
+  </button>
+
+  <div class="step-label" style="margin-top:40px;">Step 02</div>
+  <h2>System Parameters</h2>
+  <p class="section-desc">These defaults are calibrated for Nigeria. Adjust if needed.</p>
+
+  <div class="settings-grid">
+    <div class="setting-card">
+      <label>Peak Sun Hours (PSH)</label>
+      <select id="psh">
+        <option value="4">4 hrs — Rainy/cloudy season</option>
+        <option value="4.5" selected>4.5 hrs — Average Nigeria</option>
+        <option value="5">5 hrs — Dry season / North</option>
+        <option value="5.5">5.5 hrs — Sahel region</option>
+      </select>
+    </div>
+    <div class="setting-card">
+      <label>Battery Type</label>
+      <select id="battType">
+        <option value="0.5">Flooded Lead-Acid (50% DoD)</option>
+        <option value="0.6">Sealed AGM (60% DoD)</option>
+        <option value="0.8" selected>Lithium LiFePO4 (80% DoD)</option>
+      </select>
+    </div>
+    <div class="setting-card">
+      <label>Battery Voltage</label>
+      <select id="battVolt">
+        <option value="12">12V System</option>
+        <option value="24" selected>24V System</option>
+        <option value="48">48V System</option>
+      </select>
+    </div>
+    <div class="setting-card">
+      <label>System Efficiency (%)</label>
+      <input type="number" id="efficiency" value="85" min="70" max="95">
+    </div>
+    <div class="setting-card">
+      <label>Backup Days (Autonomy)</label>
+      <input type="number" id="autonomy" value="1" min="1" max="5">
+    </div>
+    <div class="setting-card">
+      <label>Panel Wattage (Wp)</label>
+      <select id="panelWatt">
+        <option value="200">200Wp panels</option>
+        <option value="300" selected>300Wp panels</option>
+        <option value="400">400Wp panels</option>
+        <option value="500">500Wp panels</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg">⚠ Please select at least one appliance before calculating.</div>
+  <button class="calc-btn" onclick="calculate()">⚡ Calculate My Solar System</button>
+
+  <div id="results">
+    <div class="step-label">Your Results</div>
+    <h2>System Recommendation</h2>
+    <div class="results-header">
+      <div>
+        <div class="total-load" id="totalWh">—</div>
+        <small>Total Daily Energy Load</small>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--muted);">System Size</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--sun)" id="systemKVA">—</div>
+      </div>
+    </div>
+    <div class="result-cards">
+      <div class="result-card">
+        <div class="r-label">☀️ Solar Panels</div>
+        <div class="r-value" id="numPanels">—</div>
+        <div class="r-unit" id="panelSpec">—</div>
+        <div class="r-note" id="panelNote"></div>
+      </div>
+      <div class="result-card">
+        <div class="r-label">🔋 Battery Bank</div>
+        <div class="r-value" id="battAh">—</div>
+        <div class="r-unit" id="battSpec">—</div>
+        <div class="r-note" id="battNote"></div>
+      </div>
+      <div class="result-card">
+        <div class="r-label">⚡ Inverter</div>
+        <div class="r-value" id="invKVA">—</div>
+        <div class="r-unit">kVA Rating</div>
+        <div class="r-note" id="invNote"></div>
+      </div>
+      <div class="result-card">
+        <div class="r-label">🔌 Charge Controller</div>
+        <div class="r-value" id="ccAmps">—</div>
+        <div class="r-unit" id="ccSpec">—</div>
+        <div class="r-note" id="ccNote"></div>
+      </div>
+      <div class="result-card">
+        <div class="r-label">💡 Peak Load</div>
+        <div class="r-value" id="peakW">—</div>
+        <div class="r-unit">Watts (simultaneous)</div>
+        <div class="r-note" id="peakNote"></div>
+      </div>
+    </div>
+    <div class="bom">
+      <div class="bom-header">📋 Bill of Materials Summary</div>
+      <table>
+        <thead><tr><th>Component</th><th>Specification</th><th>Qty</th></tr></thead>
+        <tbody id="bomBody"></tbody>
+      </table>
+    </div>
+    <div class="disclaimer">
+      <strong>⚠ Disclaimer:</strong> These calculations are estimates based on standard engineering formulas used in the Nigerian solar industry. Real-world sizing should account for cable losses, temperature derating, future load growth, and site-specific conditions. Always verify with a certified solar installer before purchasing. <strong>Solpotentia Energy Ltd</strong> recommends professional site assessment for systems above 3kVA.
+    </div>
+    <button class="reset-btn" onclick="resetAll()">↩ Start Over</button>
+  </div>
+
+  <footer>
+    <div>SolarAdvisor v1.0 · <span>Solpotentia Energy Ltd</span></div>
+    <div>Awka, Anambra State · Nigeria 🇳🇬</div>
+  </footer>
+
+</div>
+
+<!-- ===== CTA BANNER ===== -->
+<div class="sol-cta-banner" id="solCtaBanner">
+  <div class="sol-cta-inner">
+    <div class="sol-cta-text">
+      <div class="sol-cta-headline">🚀 Want a Full Professional Solar Report?</div>
+      <div class="sol-cta-sub">Exact sizing, cost breakdown, wiring config & printable proposal</div>
+      <div class="sol-cta-features">
+        <span>Battery bank config</span>
+        <span>Exact panel count</span>
+        <span>Cost estimate (₦)</span>
+        <span>Inverter sizing</span>
+      </div>
+    </div>
+    <div class="sol-cta-price">
+      <span class="price-amount">₦3,000</span>
+      <span class="price-label">Full Report</span>
+    </div>
+    <a class="sol-cta-btn"
+       href="https://t.me/SolpotentiaSolarBot?start=fullreport"
+       target="_blank" rel="noopener">
+      📲 Get Full Report
+    </a>
+    <button class="sol-cta-close"
+            onclick="document.getElementById('solCtaBanner').style.display='none'"
+            title="Close">✕</button>
+  </div>
+</div>
+
+<script>
+const APPLIANCES = [
+  { id: 'tv', icon: '📺', name: 'TV (LED)', watts: 80, hours: 6 },
+  { id: 'fan', icon: '🌀', name: 'Ceiling Fan', watts: 75, hours: 12 },
+  { id: 'freezer', icon: '🧊', name: 'Deep Freezer', watts: 200, hours: 8 },
+  { id: 'fridge', icon: '🚪', name: 'Refrigerator', watts: 150, hours: 8 },
+  { id: 'laptop', icon: '💻', name: 'Laptop', watts: 65, hours: 8 },
+  { id: 'phone', icon: '📱', name: 'Phone Charging (x3)', watts: 45, hours: 4 },
+  { id: 'bulb', icon: '💡', name: 'LED Bulbs (x5)', watts: 30, hours: 10 },
+  { id: 'decoder', icon: '📡', name: 'DSTV / Decoder', watts: 25, hours: 6 },
+  { id: 'router', icon: '📶', name: 'WiFi Router', watts: 15, hours: 24 },
+  { id: 'pump', icon: '💧', name: 'Water Pump', watts: 550, hours: 1 },
+  { id: 'ac', icon: '❄️', name: 'AC Unit (1HP)', watts: 900, hours: 8 },
+  { id: 'washing', icon: '🫧', name: 'Washing Machine', watts: 500, hours: 1 },
+  { id: 'iron', icon: '🔥', name: 'Pressing Iron', watts: 1000, hours: 0.5 },
+  { id: 'blender', icon: '🫙', name: 'Blender / Mixer', watts: 400, hours: 0.25 },
+  { id: 'cctv', icon: '📷', name: 'CCTV System', watts: 60, hours: 24 },
+  { id: 'computer', icon: '🖥️', name: 'Desktop PC', watts: 200, hours: 6 },
+];
+
+let activeAppliances = new Set();
+let customRows = [];
+
+const grid = document.getElementById('applianceGrid');
+APPLIANCES.forEach(ap => {
+  const card = document.createElement('div');
+  card.className = 'appliance-card';
+  card.id = 'card-' + ap.id;
+  const topArea = document.createElement('div');
+  topArea.style.cssText = 'cursor:pointer;';
+  topArea.innerHTML = `<span class="icon">${ap.icon}</span><div class="name">${ap.name}</div><div class="default-watts">Default: ${ap.watts}W</div>`;
+  topArea.addEventListener('click', function() { toggleAppliance(ap.id, card); });
+  const inputArea = document.createElement('div');
+  inputArea.className = 'input-row';
+  inputArea.innerHTML = `<div class="input-group"><label>Watts</label><input type="number" id="w-${ap.id}" value="${ap.watts}" min="1"></div><div class="input-group"><label>Hrs/Day</label><input type="number" id="h-${ap.id}" value="${ap.hours}" min="0.1" max="24" step="0.5"></div>`;
+  inputArea.addEventListener('click', function(e) { e.stopPropagation(); });
+  card.appendChild(topArea);
+  card.appendChild(inputArea);
+  grid.appendChild(card);
+});
+
+function toggleAppliance(id, card) {
+  if (activeAppliances.has(id)) {
+    activeAppliances.delete(id);
+    card.classList.remove('active');
+    const tick = card.querySelector('.tick-badge');
+    if (tick) tick.remove();
+  } else {
+    activeAppliances.add(id);
+    card.classList.add('active');
+    if (!card.querySelector('.tick-badge')) {
+      const tick = document.createElement('div');
+      tick.className = 'tick-badge';
+      tick.textContent = '✓';
+      tick.style.cssText = 'position:absolute;top:10px;right:10px;background:var(--accent);color:var(--earth);font-weight:bold;font-size:13px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none;';
+      card.appendChild(tick);
+    }
+  }
+}
+
+let customCounter = 0;
+function addCustomRow() {
+  customCounter++;
+  const id = 'custom-' + customCounter;
+  customRows.push(id);
+  const div = document.createElement('div');
+  div.className = 'custom-row';
+  div.id = 'row-' + id;
+  div.innerHTML = `<div><label>Appliance Name</label><input type="text" id="cn-${id}" placeholder="e.g. Hair Dryer" value=""></div><div><label>Watts</label><input type="number" id="cw-${id}" placeholder="800" min="1" value=""></div><div><label>Qty</label><input type="number" id="cq-${id}" value="1" min="1"></div><div><label>Hrs/Day</label><input type="number" id="ch-${id}" placeholder="2" min="0.1" max="24" step="0.5" value=""></div><button class="remove-btn" onclick="removeCustom('${id}')">✕</button>`;
+  document.getElementById('customList').appendChild(div);
+}
+
+function removeCustom(id) {
+  customRows = customRows.filter(r => r !== id);
+  const el = document.getElementById('row-' + id);
+  if (el) el.remove();
+}
+
+function roundUp(val, step) { return Math.ceil(val / step) * step; }
+const INVERTER_SIZES = [0.5, 1, 1.5, 2, 3, 3.5, 5, 7.5, 10];
+const CC_SIZES = [10, 20, 30, 40, 50, 60, 80, 100];
+function nextSize(val, arr) { return arr.find(s => s >= val) || arr[arr.length - 1]; }
+
+function calculate() {
+  const errEl = document.getElementById('errorMsg');
+  errEl.style.display = 'none';
+  let totalWh = 0, peakW = 0, loadItems = [];
+  APPLIANCES.forEach(ap => {
+    if (activeAppliances.has(ap.id)) {
+      const w = parseFloat(document.getElementById('w-' + ap.id).value) || ap.watts;
+      const h = parseFloat(document.getElementById('h-' + ap.id).value) || ap.hours;
+      totalWh += w * h; peakW += w;
+      loadItems.push({ name: ap.icon + ' ' + ap.name, watts: w, hours: h, wh: w * h });
+    }
+  });
+  customRows.forEach(id => {
+    const n = document.getElementById('cn-' + id)?.value || 'Custom';
+    const w = parseFloat(document.getElementById('cw-' + id)?.value);
+    const q = parseFloat(document.getElementById('cq-' + id)?.value) || 1;
+    const h = parseFloat(document.getElementById('ch-' + id)?.value);
+    if (w && h) { const tw = w * q; totalWh += tw * h; peakW += tw; loadItems.push({ name: n + (q > 1 ? ' x' + q : ''), watts: tw, hours: h, wh: tw * h }); }
+  });
+  if (totalWh === 0) { errEl.style.display = 'block'; return; }
+
+  const psh = parseFloat(document.getElementById('psh').value);
+  const dod = parseFloat(document.getElementById('battType').value);
+  const battVolt = parseFloat(document.getElementById('battVolt').value);
+  const eff = parseFloat(document.getElementById('efficiency').value) / 100;
+  const autonomy = parseFloat(document.getElementById('autonomy').value);
+  const panelWp = parseFloat(document.getElementById('panelWatt').value);
+
+  const adjustedWh = totalWh / eff;
+  const solarArrayWp = adjustedWh / psh;
+  const numPanels = Math.ceil(solarArrayWp / panelWp);
+  const actualArrayWp = numPanels * panelWp;
+  const singleBattAh = 200;
+  const battAhRaw = (totalWh * autonomy) / (dod * battVolt);
+  const numBatts = Math.ceil(battAhRaw / singleBattAh);
+  const invKVA = nextSize((peakW * 1.25) / 1000, INVERTER_SIZES);
+  const ccAmps = nextSize((actualArrayWp / (battVolt * 1.25)) * 1.25, CC_SIZES);
+
+  document.getElementById('totalWh').textContent = totalWh >= 1000 ? (totalWh/1000).toFixed(2) + ' kWh' : Math.round(totalWh) + ' Wh';
+  document.getElementById('systemKVA').textContent = invKVA + ' kVA';
+  document.getElementById('numPanels').textContent = numPanels;
+  document.getElementById('panelSpec').textContent = panelWp + 'Wp each (' + actualArrayWp + 'Wp total)';
+  document.getElementById('panelNote').textContent = 'Based on ' + psh + ' peak sun hours/day';
+  document.getElementById('battAh').textContent = numBatts + ' × ' + singleBattAh + 'Ah';
+  document.getElementById('battSpec').textContent = battVolt + 'V Battery Bank';
+  const battTypeLabel = dod === 0.8 ? 'LiFePO4' : dod === 0.6 ? 'AGM' : 'Flooded';
+  document.getElementById('battNote').textContent = battTypeLabel + ', ' + (dod*100) + '% DoD, ' + autonomy + ' day backup';
+  document.getElementById('invKVA').textContent = invKVA;
+  document.getElementById('invNote').textContent = 'Peak load: ' + Math.round(peakW) + 'W + 25% surge headroom';
+  document.getElementById('ccAmps').textContent = ccAmps + 'A';
+  document.getElementById('ccSpec').textContent = 'MPPT Controller';
+  document.getElementById('ccNote').textContent = 'For ' + actualArrayWp + 'Wp array at ' + battVolt + 'V';
+  document.getElementById('peakW').textContent = Math.round(peakW);
+  document.getElementById('peakNote').textContent = 'All selected appliances running together';
+
+  const bom = [
+    { name: 'Solar Panel', spec: panelWp + 'Wp Monocrystalline', qty: numPanels },
+    { name: 'Battery', spec: singleBattAh + 'Ah / ' + battVolt + 'V ' + battTypeLabel, qty: numBatts },
+    { name: 'Inverter/Charger', spec: invKVA + 'kVA Pure Sine Wave', qty: 1 },
+    { name: 'MPPT Charge Controller', spec: ccAmps + 'A, ' + battVolt + 'V', qty: 1 },
+    { name: 'MC4 Solar Cables', spec: '4–6mm², UV-resistant', qty: 'As needed' },
+    { name: 'DC Isolator/Fuse', spec: 'Sized for array current', qty: 1 },
+    { name: 'Battery Cables', spec: '50mm², short runs', qty: '1 set' },
+    { name: 'Mounting Structure', spec: numPanels + '-panel roof/ground mount', qty: 1 },
+  ];
+  const tbody = document.getElementById('bomBody');
+  tbody.innerHTML = '';
+  bom.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="item-name">${item.name}</td><td class="item-spec">${item.spec}</td><td class="item-qty">${item.qty}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAll() {
+  activeAppliances.clear();
+  document.querySelectorAll('.appliance-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('customList').innerHTML = '';
+  customRows = []; customCounter = 0;
+  document.getElementById('results').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
