@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- PWA Support -->
+  <!-- PWA Meta -->
   <meta name="theme-color" content="#E87722">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Solpotentia Solar Advisor">
-  <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlNvbHBvdGVudGlhIFNvbGFyIEFkdmlzb3IiLAogICJzaG9ydF9uYW1lIjogIlNvbGFyQWR2aXNvciIsCiAgImRlc2NyaXB0aW9uIjogIkZyZWUgc29sYXIgc3lzdGVtIHNpemluZyB0b29sIGZvciBOaWdlcmlhIGJ5IFNvbHBvdGVudGlhIEVuZXJneSBMdGQiLAogICJzdGFydF91cmwiOiAiL1NvbHBvdGVudGlhLXNvbGFyLWFkdmlzb3IvIiwKICAic2NvcGUiOiAiL1NvbHBvdGVudGlhLXNvbGFyLWFkdmlzb3IvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJ0aGVtZV9jb2xvciI6ICIjRTg3NzIyIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMEYwRjBGIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTkyIDE5Mic+PHJlY3Qgd2lkdGg9JzE5MicgaGVpZ2h0PScxOTInIHJ4PSc0MCcgZmlsbD0nI0U4NzcyMicvPjx0ZXh0IHk9JzEzMCcgeD0nMzAnIGZvbnQtc2l6ZT0nMTMwJz7imIDvuI88L3RleHQ+PC9zdmc+IiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwKICAgICAgInB1cnBvc2UiOiAiYW55IG1hc2thYmxlIgogICAgfQogIF0sCiAgImNhdGVnb3JpZXMiOiBbInV0aWxpdGllcyIsICJidXNpbmVzcyJdCn0=">
+  
+  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solar System Advisor | Solpotentia Energy Ltd</title>
@@ -799,11 +800,6 @@
 
 <!-- FOOTER -->
 
-<!-- PWA INSTALL BANNER -->
-<div id="pwa-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#E87722;padding:14px 16px;box-shadow:0 -4px 20px rgba(0,0,0,0.5);">
-  <div style="max-width:600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="font-size:28px;line-height:1;">☀️</div>
       <div>
         <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff;">Install Solpotentia App</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.85);">Solar Advisor · Works offline · No data used</div>
@@ -813,6 +809,19 @@
       <button onclick="dismissInstall()" style="background:rgba(0,0,0,0.2);border:none;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;cursor:pointer;">Later</button>
       <button onclick="installApp()" style="background:#fff;border:none;color:#E87722;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;">Install ↓</button>
     </div>
+  </div>
+</div>
+
+<!-- PWA Install Bar -->
+<div id="pwa-install-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:99999;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);background:#E87722;padding:0;">
+  <div style="max-width:640px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+    <div style="font-size:32px;line-height:1;flex-shrink:0;">☀️</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Install Solpotentia App</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.85);">Works offline · Add to home screen · Free</div>
+    </div>
+    <button onclick="dismissInstall()" style="background:rgba(0,0,0,0.2);border:none;color:#fff;padding:8px 10px;border-radius:8px;font-size:12px;cursor:pointer;flex-shrink:0;">Not now</button>
+    <button onclick="installApp()" style="background:#fff;border:none;color:#E87722;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;flex-shrink:0;">Install ↓</button>
   </div>
 </div>
 <footer class="footer">
@@ -1136,80 +1145,82 @@ function resetAll() {
 </script>
 
 <script>
-// PWA Install Logic
-let deferredPrompt = null;
-const banner = document.getElementById('pwa-banner');
 
-window.addEventListener('beforeinstallprompt', (e) => {
+
+<script>
+// ── PWA INSTALL ──────────────────────────────────────────
+let _installPrompt = null;
+let _bannerShown = false;
+
+function _showBanner() {
+  if (_bannerShown) return;
+  if (sessionStorage.getItem('pwa-dismissed-solar-advisor')) return;
+  const b = document.getElementById('pwa-install-bar');
+  if (b) { b.style.transform = 'translateY(0)'; _bannerShown = true; }
+}
+
+window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
-  deferredPrompt = e;
-  // Show banner after 3 seconds
-  setTimeout(() => {
-    if (!localStorage.getItem('pwa-dismissed-SolarAdvisor')) {
-      banner.style.display = 'block';
-    }
-  }, 3000);
+  _installPrompt = e;
+  setTimeout(_showBanner, 4000);
 });
 
+// Fallback: show after 6s even without event (some browsers delay it)
+setTimeout(() => {
+  if (!_bannerShown && !sessionStorage.getItem('pwa-dismissed-solar-advisor')) {
+    _showBanner();
+  }
+}, 6000);
+
 function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choice) => {
-      if (choice.outcome === 'accepted') {
-        banner.style.display = 'none';
-        localStorage.setItem('pwa-dismissed-SolarAdvisor', '1');
-      }
-      deferredPrompt = null;
+  const bar = document.getElementById('pwa-install-bar');
+  if (_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(c => {
+      _installPrompt = null;
+      if (bar) bar.style.transform = 'translateY(100%)';
+      sessionStorage.setItem('pwa-dismissed-solar-advisor', '1');
     });
   } else {
-    // Fallback for iOS
-    alert('To install: tap the Share button in your browser, then "Add to Home Screen"');
+    // iOS / unsupported browser fallback
+    alert('To install: tap the ⋮ menu in Chrome → "Add to Home screen", or the Share icon in Safari → "Add to Home Screen"');
+    if (bar) bar.style.transform = 'translateY(100%)';
+    sessionStorage.setItem('pwa-dismissed-solar-advisor', '1');
   }
 }
 
 function dismissInstall() {
-  banner.style.display = 'none';
-  localStorage.setItem('pwa-dismissed-SolarAdvisor', '1');
+  const bar = document.getElementById('pwa-install-bar');
+  if (bar) bar.style.transform = 'translateY(100%)';
+  sessionStorage.setItem('pwa-dismissed-solar-advisor', '1');
 }
 
 window.addEventListener('appinstalled', () => {
-  banner.style.display = 'none';
-  deferredPrompt = null;
+  const bar = document.getElementById('pwa-install-bar');
+  if (bar) bar.style.transform = 'translateY(100%)';
 });
 
-// Register inline service worker for offline support
+// Service Worker - minimal, for caching
 if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE = 'solpotentia-solaradvisor-v1';
-const ASSETS = [self.location.pathname];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(
-    keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-  )));
+  const sw = `
+const C='spe-solar-advisor-v2';
+self.addEventListener('install',e=>{self.skipWaiting();});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));
   self.clients.claim();
 });
-
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-      const clone = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, clone));
-      return res;
-    }))
-  );
-});
-  `;
-  const blob = new Blob([swCode], {type: 'application/javascript'});
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl, {scope: '/Solpotentia-solar-advisor/'})
-    .then(() => console.log('SW registered for Solar Advisor'))
-    .catch(e => console.log('SW registration failed:', e));
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET')return;
+  e.respondWith(caches.open(C).then(cache=>
+    cache.match(e.request).then(cached=>{
+      const net=fetch(e.request).then(res=>{cache.put(e.request,res.clone());return res;}).catch(()=>cached);
+      return cached||net;
+    })
+  ));
+});`;
+  const blob = new Blob([sw], {type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob))
+    .catch(()=>{});
 }
 </script>
 </body>
