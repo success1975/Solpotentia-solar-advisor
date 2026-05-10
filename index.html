@@ -922,20 +922,25 @@ function buildPickerList(filter) {
   const groups = [...new Set(filtered.map(a => a.group))];
   let html = '';
   if (filtered.length === 0) {
-    html = `<div class="picker-empty">No appliances found for "${filter}"</div>`;
+    html = '<div class="picker-empty">No appliances found</div>';
   } else {
     groups.forEach(g => {
-      html += `<div class="picker-group-label">${g}</div>`;
+      html += '<div class="picker-group-label">' + g + '</div>';
       filtered.filter(a => a.group === g).forEach(a => {
-        const safeName = a.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-        html += `<div class="picker-item" onclick="selectAppliance('${safeName}', ${a.watts})">
-          <span class="item-name">${a.name}</span>
-          <span class="item-watts">${a.watts}W</span>
-        </div>`;
+        const idx = APPLIANCE_DB.indexOf(a);
+        html += '<div class="picker-item" data-idx="' + idx + '" onclick="selectApplianceByIndex(this.dataset.idx)">' +
+          '<span class="item-name">' + a.name + '</span>' +
+          '<span class="item-watts">' + a.watts + 'W</span>' +
+          '</div>';
       });
     });
   }
   listEl.innerHTML = html;
+}
+function selectApplianceByIndex(idx) {
+  const a = APPLIANCE_DB[parseInt(idx)];
+  if (!a || activeRowId === null) return;
+  selectAppliance(a.name, a.watts);
 }
 
 function filterPicker(val) { buildPickerList(val); }
