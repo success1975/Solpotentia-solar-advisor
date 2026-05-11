@@ -831,6 +831,9 @@
   <span style="color:var(--dark4)">SolarAdvisor v2.0</span>
 </footer>
 
+
+
+
 <script>
 // ─── APPLIANCE DATABASE ───────────────────────────────────────────
 const APPLIANCE_DB = [
@@ -1143,85 +1146,56 @@ function resetAll() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
-
 <script>
 
-
-<script>
-// ── PWA INSTALL ──────────────────────────────────────────
-let _installPrompt = null;
-let _bannerShown = false;
+// ── PWA INSTALL ──────────────────────────────────────
+var _ip = null;
+var _shown = false;
 
 function _showBanner() {
-  if (_bannerShown) return;
-  if (sessionStorage.getItem('pwa-dismissed-solar-advisor')) return;
-  const b = document.getElementById('pwa-install-bar');
-  if (b) { b.style.transform = 'translateY(0)'; _bannerShown = true; }
+  if (_shown) return;
+  if (sessionStorage.getItem('pwa-solar-advisor')) return;
+  var b = document.getElementById('pwa-install-bar');
+  if (b) { b.style.transform = 'translateY(0)'; _shown = true; }
 }
 
-window.addEventListener('beforeinstallprompt', e => {
+window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
-  _installPrompt = e;
-  setTimeout(_showBanner, 4000);
+  _ip = e;
+  setTimeout(_showBanner, 3000);
 });
 
-// Fallback: show after 6s even without event (some browsers delay it)
-setTimeout(() => {
-  if (!_bannerShown && !sessionStorage.getItem('pwa-dismissed-solar-advisor')) {
-    _showBanner();
-  }
+setTimeout(function() {
+  if (!_shown) _showBanner();
 }, 6000);
 
 function installApp() {
-  const bar = document.getElementById('pwa-install-bar');
-  if (_installPrompt) {
-    _installPrompt.prompt();
-    _installPrompt.userChoice.then(c => {
-      _installPrompt = null;
+  var bar = document.getElementById('pwa-install-bar');
+  if (_ip) {
+    _ip.prompt();
+    _ip.userChoice.then(function(c) {
+      _ip = null;
       if (bar) bar.style.transform = 'translateY(100%)';
-      sessionStorage.setItem('pwa-dismissed-solar-advisor', '1');
+      sessionStorage.setItem('pwa-solar-advisor', '1');
     });
   } else {
-    // iOS / unsupported browser fallback
-    alert('To install: tap the ⋮ menu in Chrome → "Add to Home screen", or the Share icon in Safari → "Add to Home Screen"');
+    alert('To install on Android: tap the menu (3 dots) in Chrome then "Add to Home screen".\nOn iPhone: tap Share then "Add to Home Screen".');
     if (bar) bar.style.transform = 'translateY(100%)';
-    sessionStorage.setItem('pwa-dismissed-solar-advisor', '1');
+    sessionStorage.setItem('pwa-solar-advisor', '1');
   }
 }
 
 function dismissInstall() {
-  const bar = document.getElementById('pwa-install-bar');
+  var bar = document.getElementById('pwa-install-bar');
   if (bar) bar.style.transform = 'translateY(100%)';
-  sessionStorage.setItem('pwa-dismissed-solar-advisor', '1');
+  sessionStorage.setItem('pwa-solar-advisor', '1');
 }
 
-window.addEventListener('appinstalled', () => {
-  const bar = document.getElementById('pwa-install-bar');
+window.addEventListener('appinstalled', function() {
+  var bar = document.getElementById('pwa-install-bar');
   if (bar) bar.style.transform = 'translateY(100%)';
 });
 
-// Service Worker - minimal, for caching
-if ('serviceWorker' in navigator) {
-  const sw = `
-const C='spe-solar-advisor-v2';
-self.addEventListener('install',e=>{self.skipWaiting();});
-self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  e.respondWith(caches.open(C).then(cache=>
-    cache.match(e.request).then(cached=>{
-      const net=fetch(e.request).then(res=>{cache.put(e.request,res.clone());return res;}).catch(()=>cached);
-      return cached||net;
-    })
-  ));
-});`;
-  const blob = new Blob([sw], {type:'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(blob))
-    .catch(()=>{});
-}
 </script>
 </body>
 </html>
